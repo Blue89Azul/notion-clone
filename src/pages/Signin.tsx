@@ -1,14 +1,20 @@
 import { authRepository } from '@/modules/auth/auth.repository';
+import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const currentUserStore = useCurrentUserStore(); 
 
   const signin = async () => {
     const user = await authRepository.signin(email, password);
-    console.log(user);
+    currentUserStore.set(user);
+  }
+
+  if (currentUserStore.currentUser != null) {
+    return <Navigate replace to='/' />
   }
 
   return (
