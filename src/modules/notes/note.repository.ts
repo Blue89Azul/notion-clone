@@ -7,9 +7,9 @@ export const noteRepository = {
     ) {
         const {data, error} = await supabase.from('notes').insert([
             {
-                use_id: userId,
+                user_id: userId,
                 title: params.title,
-                parent_document: params.parentId
+                parent_document: params.parentId,
             }
         ]).select().single();
 
