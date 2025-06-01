@@ -1,16 +1,23 @@
 import { authRepository } from "@/modules/auth/auth.repository";
+import { useCurrentUserStore } from "@/modules/auth/current-user.state";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 function Signup() {
   // 各inputに入力された値を保持する処理を作る
   const [name, setName]         = useState('');
   const [email, setEmail]       = useState('');
   const [password, setPassowrd] = useState('');
+  const currentUserStore = useCurrentUserStore();
 
   const signup = async () => {
     const user = await authRepository.signup(name, email, password);
-    console.log(user);
+    currentUserStore.set(user);
   };
+
+  if (currentUserStore.currentUser != null) {
+    return <Navigate replace to='/' />
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
