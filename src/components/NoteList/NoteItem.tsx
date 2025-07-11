@@ -4,11 +4,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { FileIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
 import { Item } from '../SideBar/Item';
 import { cn } from '@/lib/utils';
+import { Note } from '@/modules/notes/note.entity';
+import { useState } from 'react';
 
 interface Props {
+  note: Note;
   expanded?: boolean;
   layer?: number;
   isSelected?: boolean;
@@ -19,6 +22,7 @@ interface Props {
 }
 
 export function NoteItem({
+  note,
   onClick,
   layer = 0,
   expanded = false,
@@ -27,8 +31,16 @@ export function NoteItem({
   onDelete,
   onExpand,
 }: Props) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const getIcon = () => {
+    return expanded ? ChevronDown : isHovered ? ChevronRight : FileIcon;
+  };
+
   const menu = (
-    <div className={cn('ml-auto flex items-center gap-x-2')}>
+    <div className={cn('ml-auto flex items-center gap-x-2',
+      !isHovered && 'opacity-0'
+    )}>
       <DropdownMenu>
         <DropdownMenuTrigger onClick={(e) => e.stopPropagation()}>
           <div
@@ -62,15 +74,18 @@ export function NoteItem({
 
   return (
     <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       role="button"
       style={{ paddingLeft: layer != null ? `${layer * 12 + 12}px` : '12px' }}
     >
       <Item
-        label={'test'}
-        icon={FileIcon}
+        label={note.title ?? '無題'}
+        icon={getIcon()}
         onIconClick={onExpand}
         trailingItem={menu}
+        isActive={isHovered || isSelected}
       />
     </div>
   );
